@@ -23,6 +23,7 @@ import org.inventivetalent.packetlistener.handler.PacketOptions;
 import org.inventivetalent.packetlistener.handler.ReceivedPacket;
 import org.inventivetalent.packetlistener.handler.SentPacket;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
+import org.mcstats.MetricsLite;
 
 import java.util.Collection;
 
@@ -113,6 +114,14 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 			public void onReceive(ReceivedPacket receivedPacket) {
 			}
 		});
+
+		try {
+			MetricsLite metrics = new MetricsLite(this);
+			if (metrics.start()) {
+				getLogger().info("Metrics started");
+			}
+		} catch (Exception e) {
+		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
