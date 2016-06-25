@@ -1,0 +1,7 @@
+muffle:
+
+  # Radius to affect
+  radius: 8
+
+  # Sound volume percentage (0.0 - 1.0)
+  amount: 0.1

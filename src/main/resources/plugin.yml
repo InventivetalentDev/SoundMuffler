@@ -1,0 +1,6 @@
+name: SoundMuffler
+main: org.inventivetalent.soundmuffler.SoundMuffler
+author: inventivetalent
+version: ${project.version}
+
+softdepend: [PacketListenerApi]
