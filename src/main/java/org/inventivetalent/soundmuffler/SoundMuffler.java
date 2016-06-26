@@ -140,8 +140,6 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 					}
 				}
 
-				event.getPlayer().getWorld().spawnParticle(Particle.VILLAGER_HAPPY, targetVector.toLocation(event.getPlayer().getWorld()), 1);
-
 				Location location = targetVector.toLocation(event.getPlayer().getWorld()).subtract(0, 1.25, 0);
 				ArmorStand armorStand = location.getWorld().spawn(location, ArmorStand.class);
 				armorStand.setVisible(false);
