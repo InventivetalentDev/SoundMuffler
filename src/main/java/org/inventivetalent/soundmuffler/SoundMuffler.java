@@ -23,6 +23,7 @@ import org.inventivetalent.packetlistener.handler.PacketOptions;
 import org.inventivetalent.packetlistener.handler.ReceivedPacket;
 import org.inventivetalent.packetlistener.handler.SentPacket;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
+import org.inventivetalent.reflection.minecraft.Minecraft;
 import org.mcstats.MetricsLite;
 
 import java.util.Collection;
@@ -33,6 +34,8 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 	float  amount;
 
 	ItemStack soundMufflerItem;
+
+	boolean is1_8 = Minecraft.VERSION.olderThan(Minecraft.Version.v1_9_R1);
 
 	@Override
 	public void onEnable() {
@@ -73,10 +76,10 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 			public void onSend(final SentPacket sentPacket) {
 				if (sentPacket.hasPlayer()) {
 					if ("PacketPlayOutCustomSoundEffect".equals(sentPacket.getPacketName()) || "PacketPlayOutNamedSoundEffect".equals(sentPacket.getPacketName())) {
-						int c = (int) sentPacket.getPacketValue("c");
-						int d = (int) sentPacket.getPacketValue("d");
-						int e = (int) sentPacket.getPacketValue("e");
-						final float f = (float) sentPacket.getPacketValue("f");
+						int c = (int) sentPacket.getPacketValue(is1_8 ? "b" : "c");
+						int d = (int) sentPacket.getPacketValue(is1_8 ? "c" : "d");
+						int e = (int) sentPacket.getPacketValue(is1_8 ? "d" : "e");
+						final float f = (float) sentPacket.getPacketValue(is1_8 ? "e" : "f");
 
 						final double x = c / 8.0D;
 						final double y = d / 8.0D;
@@ -105,7 +108,7 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 							Thread.currentThread().interrupt();
 							return;
 						}
-						sentPacket.setPacketValue("f", newVolume);
+						sentPacket.setPacketValue(is1_8 ? "e" : "f", newVolume);
 					}
 				}
 			}
