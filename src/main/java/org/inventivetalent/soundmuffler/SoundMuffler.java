@@ -26,6 +26,7 @@ import org.inventivetalent.pluginannotations.PluginAnnotations;
 import org.inventivetalent.reflection.minecraft.Minecraft;
 import org.mcstats.MetricsLite;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class SoundMuffler extends JavaPlugin implements Listener {
@@ -88,7 +89,19 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 						RunnableFutureResult<Float> runnableFuture = new RunnableFutureResult<Float>() {
 							@Override
 							public Float evaluate() {
-								Collection<Entity> entities = sentPacket.getPlayer().getWorld().getNearbyEntities(new Location(sentPacket.getPlayer().getWorld(), x, y, z), radius, radius, radius);
+								Location location = new Location(sentPacket.getPlayer().getWorld(), x, y, z);
+								Collection<Entity> entities;
+								if (is1_8) {
+									double squaredRadius = radius * radius;
+									entities = new ArrayList<>();
+									for (Entity entity : sentPacket.getPlayer().getWorld().getEntitiesByClass(ArmorStand.class)) {
+										if (entity.getLocation().distanceSquared(location) < squaredRadius) {
+											entities.add(entity);
+										}
+									}
+								} else {
+									entities = sentPacket.getPlayer().getWorld().getNearbyEntities(location, radius, radius, radius);
+								}
 								for (Entity entity : entities) {
 									if (entity.getType() == EntityType.ARMOR_STAND) {
 										if ("SoundMuffler".equals(((ArmorStand) entity).getCustomName())) {
