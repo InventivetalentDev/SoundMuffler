@@ -23,8 +23,10 @@ import org.inventivetalent.packetlistener.handler.PacketOptions;
 import org.inventivetalent.packetlistener.handler.ReceivedPacket;
 import org.inventivetalent.packetlistener.handler.SentPacket;
 import org.inventivetalent.pluginannotations.PluginAnnotations;
+import org.inventivetalent.reflection.minecraft.Minecraft;
 import org.mcstats.MetricsLite;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class SoundMuffler extends JavaPlugin implements Listener {
@@ -33,6 +35,8 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 	float  amount;
 
 	ItemStack soundMufflerItem;
+
+	boolean is1_8 = Minecraft.VERSION.olderThan(Minecraft.Version.v1_9_R1);
 
 	@Override
 	public void onEnable() {
@@ -73,10 +77,10 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 			public void onSend(final SentPacket sentPacket) {
 				if (sentPacket.hasPlayer()) {
 					if ("PacketPlayOutCustomSoundEffect".equals(sentPacket.getPacketName()) || "PacketPlayOutNamedSoundEffect".equals(sentPacket.getPacketName())) {
-						int c = (int) sentPacket.getPacketValue("c");
-						int d = (int) sentPacket.getPacketValue("d");
-						int e = (int) sentPacket.getPacketValue("e");
-						final float f = (float) sentPacket.getPacketValue("f");
+						int c = (int) sentPacket.getPacketValue(is1_8 ? "b" : "c");
+						int d = (int) sentPacket.getPacketValue(is1_8 ? "c" : "d");
+						int e = (int) sentPacket.getPacketValue(is1_8 ? "d" : "e");
+						final float f = (float) sentPacket.getPacketValue(is1_8 ? "e" : "f");
 
 						final double x = c / 8.0D;
 						final double y = d / 8.0D;
@@ -85,11 +89,25 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 						RunnableFutureResult<Float> runnableFuture = new RunnableFutureResult<Float>() {
 							@Override
 							public Float evaluate() {
-								Collection<Entity> entities = sentPacket.getPlayer().getWorld().getNearbyEntities(new Location(sentPacket.getPlayer().getWorld(), x, y, z), radius, radius, radius);
+								Location location = new Location(sentPacket.getPlayer().getWorld(), x, y, z);
+								Collection<Entity> entities;
+								if (is1_8) {
+									double squaredRadius = radius * radius;
+									entities = new ArrayList<>();
+									for (Entity entity : sentPacket.getPlayer().getWorld().getEntitiesByClass(ArmorStand.class)) {
+										if (entity.getLocation().distanceSquared(location) < squaredRadius) {
+											entities.add(entity);
+										}
+									}
+								} else {
+									entities = sentPacket.getPlayer().getWorld().getNearbyEntities(location, radius, radius, radius);
+								}
 								for (Entity entity : entities) {
 									if (entity.getType() == EntityType.ARMOR_STAND) {
 										if ("SoundMuffler".equals(((ArmorStand) entity).getCustomName())) {
-											entity.getLocation().getWorld().spawnParticle(Particle.SUSPENDED_DEPTH, ((ArmorStand) entity).getEyeLocation(), 1, 0.75, 0.75, 0.75, 0);
+											if (!is1_8) {
+												entity.getLocation().getWorld().spawnParticle(Particle.SUSPENDED_DEPTH, ((ArmorStand) entity).getEyeLocation(), 1, 0.75, 0.75, 0.75, 0);
+											}
 											return (f * amount);
 										}
 									}
@@ -105,7 +123,7 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 							Thread.currentThread().interrupt();
 							return;
 						}
-						sentPacket.setPacketValue("f", newVolume);
+						sentPacket.setPacketValue(is1_8 ? "e" : "f", newVolume);
 					}
 				}
 			}
