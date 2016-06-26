@@ -105,7 +105,9 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 								for (Entity entity : entities) {
 									if (entity.getType() == EntityType.ARMOR_STAND) {
 										if ("SoundMuffler".equals(((ArmorStand) entity).getCustomName())) {
-											entity.getLocation().getWorld().spawnParticle(Particle.SUSPENDED_DEPTH, ((ArmorStand) entity).getEyeLocation(), 1, 0.75, 0.75, 0.75, 0);
+											if (!is1_8) {
+												entity.getLocation().getWorld().spawnParticle(Particle.SUSPENDED_DEPTH, ((ArmorStand) entity).getEyeLocation(), 1, 0.75, 0.75, 0.75, 0);
+											}
 											return (f * amount);
 										}
 									}
