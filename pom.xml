@@ -6,7 +6,7 @@
 
     <groupId>org.inventivetalent</groupId>
     <artifactId>soundmuffler</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
     <name>SoundMuffler</name>
 
     <build>
@@ -53,6 +53,7 @@
                                     <include>org.mcstats.*</include>
                                     <include>org.inventivetalent:soundmuffler**</include>
                                     <include>org.inventivetalent:reflectionhelper**</include>
+                                    <include>org.inventivetalent:pluginannotations**</include>
                                     <include>org.inventivetalent:mc-wrappers**</include>
                                 </includes>
                             </artifactSet>
