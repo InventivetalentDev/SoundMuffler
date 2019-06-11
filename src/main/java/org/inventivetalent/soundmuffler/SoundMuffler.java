@@ -1,9 +1,6 @@
 package org.inventivetalent.soundmuffler;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -22,11 +19,7 @@ import org.inventivetalent.packetlistener.handler.PacketHandler;
 import org.inventivetalent.packetlistener.handler.PacketOptions;
 import org.inventivetalent.packetlistener.handler.ReceivedPacket;
 import org.inventivetalent.packetlistener.handler.SentPacket;
-import org.inventivetalent.pluginannotations.PluginAnnotations;
-import org.inventivetalent.reflection.minecraft.Minecraft;
-import org.mcstats.MetricsLite;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 public class SoundMuffler extends JavaPlugin implements Listener {
@@ -35,8 +28,6 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 	float  amount;
 
 	ItemStack soundMufflerItem;
-
-	boolean is1_8 = Minecraft.VERSION.olderThan(Minecraft.Version.v1_9_R1);
 
 	@Override
 	public void onEnable() {
@@ -50,9 +41,7 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 		radius = getConfig().getDouble("muffle.radius");
 		amount = (float) getConfig().getDouble("muffle.amount");
 
-		PluginAnnotations.loadAll(this, this);
-
-		soundMufflerItem = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+		soundMufflerItem = new ItemStack(Material.PLAYER_HEAD, 1);
 		SkullMeta meta = (SkullMeta) soundMufflerItem.getItemMeta();
 		meta.setDisplayName("Sound Muffler");
 		meta.setOwner("MHF_SoundMuffler");
@@ -65,9 +54,9 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 			throw new RuntimeException(e);
 		}
 		soundMufflerItem.setItemMeta(meta);
-		ShapedRecipe recipe = new ShapedRecipe(soundMufflerItem.clone());
+		ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(this, "soundmuffler"), soundMufflerItem.clone());
 		recipe.shape("www", "wnw", "www");
-		recipe.setIngredient('w', Material.WOOL);
+		recipe.setIngredient('w', Material.WHITE_WOOL);
 		recipe.setIngredient('n', Material.NOTE_BLOCK);
 		Bukkit.addRecipe(recipe);
 
@@ -77,10 +66,10 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 			public void onSend(final SentPacket sentPacket) {
 				if (sentPacket.hasPlayer()) {
 					if ("PacketPlayOutCustomSoundEffect".equals(sentPacket.getPacketName()) || "PacketPlayOutNamedSoundEffect".equals(sentPacket.getPacketName())) {
-						int c = (int) sentPacket.getPacketValue(is1_8 ? "b" : "c");
-						int d = (int) sentPacket.getPacketValue(is1_8 ? "c" : "d");
-						int e = (int) sentPacket.getPacketValue(is1_8 ? "d" : "e");
-						final float f = (float) sentPacket.getPacketValue(is1_8 ? "e" : "f");
+						int c = (int) sentPacket.getPacketValue("c");
+						int d = (int) sentPacket.getPacketValue("d");
+						int e = (int) sentPacket.getPacketValue("e");
+						final float f = (float) sentPacket.getPacketValue("f");
 
 						final double x = c / 8.0D;
 						final double y = d / 8.0D;
@@ -91,23 +80,11 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 							public Float evaluate() {
 								Location location = new Location(sentPacket.getPlayer().getWorld(), x, y, z);
 								Collection<Entity> entities;
-								if (is1_8) {
-									double squaredRadius = radius * radius;
-									entities = new ArrayList<>();
-									for (Entity entity : sentPacket.getPlayer().getWorld().getEntitiesByClass(ArmorStand.class)) {
-										if (entity.getLocation().distanceSquared(location) < squaredRadius) {
-											entities.add(entity);
-										}
-									}
-								} else {
-									entities = sentPacket.getPlayer().getWorld().getNearbyEntities(location, radius, radius, radius);
-								}
+								entities = sentPacket.getPlayer().getWorld().getNearbyEntities(location, radius, radius, radius);
 								for (Entity entity : entities) {
 									if (entity.getType() == EntityType.ARMOR_STAND) {
 										if ("SoundMuffler".equals(((ArmorStand) entity).getCustomName())) {
-											if (!is1_8) {
-												entity.getLocation().getWorld().spawnParticle(Particle.SUSPENDED_DEPTH, ((ArmorStand) entity).getEyeLocation(), 1, 0.75, 0.75, 0.75, 0);
-											}
+											entity.getLocation().getWorld().spawnParticle(Particle.SUSPENDED_DEPTH, ((ArmorStand) entity).getEyeLocation(), 1, 0.75, 0.75, 0.75, 0);
 											return (f * amount);
 										}
 									}
@@ -123,7 +100,7 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 							Thread.currentThread().interrupt();
 							return;
 						}
-						sentPacket.setPacketValue(is1_8 ? "e" : "f", newVolume);
+						sentPacket.setPacketValue("f", newVolume);
 					}
 				}
 			}
@@ -133,19 +110,12 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 			}
 		});
 
-		try {
-			MetricsLite metrics = new MetricsLite(this);
-			if (metrics.start()) {
-				getLogger().info("Metrics started");
-			}
-		} catch (Exception e) {
-		}
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
 	public void on(BlockPlaceEvent event) {
 		if (event.isCancelled()) { return; }
-		if (event.getItemInHand().getType() == Material.SKULL_ITEM) {
+		if (event.getItemInHand().getType() == Material.PLAYER_HEAD) {
 			if ("Sound Muffler".equals(event.getItemInHand().getItemMeta().getDisplayName())) {
 				event.setCancelled(true);
 

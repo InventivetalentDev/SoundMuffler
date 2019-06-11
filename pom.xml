@@ -50,19 +50,12 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>org.mcstats.*</include>
                                     <include>org.inventivetalent:soundmuffler**</include>
                                     <include>org.inventivetalent:reflectionhelper**</include>
                                     <include>org.inventivetalent:pluginannotations**</include>
                                     <include>org.inventivetalent:mc-wrappers**</include>
                                 </includes>
                             </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.mcstats</pattern>
-                                    <shadedPattern>org.inventivetalent.soundmuffler.mcstats</shadedPattern>
-                                </relocation>
-                            </relocations>
                         </configuration>
                     </execution>
                 </executions>
@@ -73,57 +66,42 @@
         <repository>
             <id>releases</id>
             <name>Internal Releases</name>
-            <url>http://repo.inventivetalent.org/content/repositories/releases/</url>
+            <url>https://repo.inventivetalent.org/content/repositories/releases/</url>
         </repository>
         <snapshotRepository>
             <id>snapshots</id>
             <name>Internal Releases</name>
-            <url>http://repo.inventivetalent.org/content/repositories/snapshots/</url>
+            <url>https://repo.inventivetalent.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot</artifactId>
-            <version>1.9-R0.1-SNAPSHOT</version>
+            <version>1.13.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>craftbukkit</artifactId>
-            <version>1.9-R0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.mcstats.bukkit</groupId>
-            <artifactId>metrics-lite</artifactId>
-            <version>R8-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.inventivetalent.packetlistener</groupId>
             <artifactId>api</artifactId>
-            <version>3.4.0</version>
+            <version>3.7.3-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.inventivetalent</groupId>
             <artifactId>reflectionhelper</artifactId>
-            <version>1.8.0</version>
-        </dependency>
-        <dependency>
-            <groupId>org.inventivetalent</groupId>
-            <artifactId>pluginannotations</artifactId>
-            <version>1.4.2</version>
+            <version>1.14.4-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.inventivetalent</groupId>
             <artifactId>mc-wrappers</artifactId>
-            <version>1.0.1</version>
+            <version>1.0.3-SNAPSHOT</version>
         </dependency>
 
         <dependency>
             <groupId>org.inventivetalent.spiget-update</groupId>
             <artifactId>bukkit</artifactId>
-            <version>[1.0.1,)</version>
+            <version>1.4.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
