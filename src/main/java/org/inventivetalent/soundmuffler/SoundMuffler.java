@@ -117,24 +117,26 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 		if (event.isCancelled()) { return; }
 		if (event.getItemInHand().getType() == Material.PLAYER_HEAD) {
 			if ("Sound Muffler".equals(event.getItemInHand().getItemMeta().getDisplayName())) {
-				event.setCancelled(true);
+				if (event.getPlayer().hasPermission("soundmuffler.place")) {
+					event.setCancelled(true);
 
-				Vector direction = event.getPlayer().getLocation().getDirection();
-				Vector targetVector = event.getPlayer().getEyeLocation().toVector();
-				for (double d = 1; d < 8; d += 0.02) {
-					targetVector = direction.clone().multiply(d).add(event.getPlayer().getEyeLocation().toVector());
-					if (targetVector.toLocation(event.getPlayer().getWorld()).getBlock().getType().isSolid()) {
-						break;
+					Vector direction = event.getPlayer().getLocation().getDirection();
+					Vector targetVector = event.getPlayer().getEyeLocation().toVector();
+					for (double d = 1; d < 8; d += 0.02) {
+						targetVector = direction.clone().multiply(d).add(event.getPlayer().getEyeLocation().toVector());
+						if (targetVector.toLocation(event.getPlayer().getWorld()).getBlock().getType().isSolid()) {
+							break;
+						}
 					}
-				}
 
-				Location location = targetVector.toLocation(event.getPlayer().getWorld()).subtract(0, 1.25, 0);
-				ArmorStand armorStand = location.getWorld().spawn(location, ArmorStand.class);
-				armorStand.setVisible(false);
-				armorStand.setGravity(false);
-				//				armorStand.setMarker(true);
-				armorStand.setCustomName("SoundMuffler");
-				armorStand.setHelmet(soundMufflerItem.clone());
+					Location location = targetVector.toLocation(event.getPlayer().getWorld()).subtract(0, 1.25, 0);
+					ArmorStand armorStand = location.getWorld().spawn(location, ArmorStand.class);
+					armorStand.setVisible(false);
+					armorStand.setGravity(false);
+					//				armorStand.setMarker(true);
+					armorStand.setCustomName("SoundMuffler");
+					armorStand.setHelmet(soundMufflerItem.clone());
+				}
 			}
 		}
 	}
@@ -151,8 +153,10 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 		if (event.isCancelled()) { return; }
 		if (event.getEntityType() == EntityType.ARMOR_STAND) {
 			if ("SoundMuffler".equals(event.getEntity().getCustomName())) {
-				event.getEntity().remove();
-				event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation().add(0, 1.25, 0), soundMufflerItem.clone());
+				if (event.getEntity().hasPermission("soundmuffler.break")) {
+					event.getEntity().remove();
+					event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation().add(0, 1.25, 0), soundMufflerItem.clone());
+				}
 			}
 		}
 	}
