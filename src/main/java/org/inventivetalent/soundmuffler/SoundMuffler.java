@@ -113,13 +113,11 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void on(BlockPlaceEvent event) {
+	public void on(final BlockPlaceEvent event) {
 		if (event.isCancelled()) { return; }
 		if (event.getItemInHand().getType() == Material.PLAYER_HEAD) {
 			if ("Sound Muffler".equals(event.getItemInHand().getItemMeta().getDisplayName())) {
 				if (event.getPlayer().hasPermission("soundmuffler.place")) {
-					event.setCancelled(true);
-
 					Vector direction = event.getPlayer().getLocation().getDirection();
 					Vector targetVector = event.getPlayer().getEyeLocation().toVector();
 					for (double d = 1; d < 8; d += 0.02) {
@@ -136,6 +134,13 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 					//				armorStand.setMarker(true);
 					armorStand.setCustomName("SoundMuffler");
 					armorStand.setHelmet(soundMufflerItem.clone());
+
+					Bukkit.getScheduler().runTaskLater(this, new Runnable() {
+						@Override
+						public void run() {
+							event.getBlockPlaced().setType(Material.CAVE_AIR);
+						}
+					},5);
 				}
 			}
 		}
