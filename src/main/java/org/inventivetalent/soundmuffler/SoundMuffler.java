@@ -8,7 +8,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerArmorStandManipulateEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
@@ -154,11 +154,11 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 	}
 
 	@EventHandler(priority = EventPriority.LOW)
-	public void on(EntityDamageEvent event) {
+	public void on(EntityDamageByEntityEvent event) {
 		if (event.isCancelled()) { return; }
 		if (event.getEntityType() == EntityType.ARMOR_STAND) {
 			if ("SoundMuffler".equals(event.getEntity().getCustomName())) {
-				if (event.getEntity().hasPermission("soundmuffler.break")) {
+				if (event.getDamager().hasPermission("soundmuffler.break")) {
 					event.getEntity().remove();
 					event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation().add(0, 1.25, 0), soundMufflerItem.clone());
 				}
