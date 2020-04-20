@@ -65,7 +65,7 @@ public class SoundMuffler extends JavaPlugin implements Listener {
 			@Override
 			public void onSend(final SentPacket sentPacket) {
 				if (sentPacket.hasPlayer()) {
-					if ("PacketPlayOutCustomSoundEffect".equals(sentPacket.getPacketName()) || "PacketPlayOutNamedSoundEffect".equals(sentPacket.getPacketName())) {
+					if ("PacketPlayOutCustomSoundEffect".equals(sentPacket.getPacketName()) || "PacketPlayOutNamedSoundEffect".equals(sentPacket.getPacketName()) || "PacketPlayOutEntitySound".equals(sentPacket.getPacketName())) {
 						int c = (int) sentPacket.getPacketValue("c");
 						int d = (int) sentPacket.getPacketValue("d");
 						int e = (int) sentPacket.getPacketValue("e");
